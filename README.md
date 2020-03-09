@@ -67,7 +67,7 @@ File stands for file or directory.
 
 ### Architecture Overview
 
-
+<pre>
     -----------	pipe  ------------      ----------
     | auditd  |------>| audispd  |      |  fusg  |------> stdout
     ----------- disp. ------------      ----------
@@ -80,7 +80,7 @@ File stands for file or directory.
     | kauditd |       |  fusgd  | ------> | fusg |
     -----------       -----------         |  .db |
 		    		                      `------´
-
+</pre>
 Quite a long way ...
 
 		  
@@ -120,17 +120,18 @@ Command line tool to query the fusg database.
         * Type of access (create/read/write/delete?)
 3. List all file<->executable statistics
 
+<pre>
     > fusg -e /bin/firefox
-
+    
     File usage statistics
     executable: '/bin/firefox'
-  
+    
     CREAT   READ  WRITE  FILE
     ---------------------------
       1   1002    124  /home/homac/.mozilla
       1   1002    124  /home/homac/.mozilla
       1   1002    124  /home/homac/.mozilla
-      
+</pre>      
 
 #### fusg.db
 Database, containing file access events.
