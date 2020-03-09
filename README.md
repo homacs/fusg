@@ -47,14 +47,12 @@ File stands for file or directory.
 
 * Watch local files of a given set of directories (e.g. /home/user)
 * For each file provide the following information:
-  file_action + executable + user + last_time_stamp (for this combination)
-  Each combination of file_action, executable, user has exactly one entry.
-  file_action is one of: create | read | write/read | remove
-* For each executable and/or user, provide the following information:
+  file_action + executable + last_time_stamp (for this combination)
+  Each combination of file_action and executable has exactly one entry.
+  file_action is one of: create | read | write | delete
+* For each executable provide the following information:
   file_name + file_action + last_time_stamp
-* List users of a file.
-* Tell which executable and/or user created a given file.
-* Tell which files are used by a user
+* Tell which executable created a given file.
 * Tell which files are used by an executable
 
 ### Possible Future Requirements
