@@ -1,4 +1,15 @@
 #!/bin/bash
+#
+#
+# Installs command line tool fusg.
+#
+#   The important part is:
+#
+#   * to be root and
+#   * chmod +s fusg
+#
+#   ... otherwise, fusg can't access the db.
+#
 
 
 if ! [ "$USER" == "root" ]

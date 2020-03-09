@@ -1,0 +1,31 @@
+
+USAGE:
+
+    fusg -h
+ 
+will tell you more.
+
+
+
+INSTALLATION
+
+
+Simply copy the executable to some suitable location.
+
+By default, it expects a configuration in
+
+    /etc/fusg/fusg.conf
+
+Use argument -c to provide a different location.
+
+You've got an example conf file with the sources 
+(see fusg/etc). See FUSGD_README for more info on that.
+
+The command line tool fusg, cannot access the data base
+unless
+
+   1. It is owned by root
+      > sudo fusg /usr/local/bin/fusg
+   2. The setuid bit is set
+      > sudo chmod +s /usr/local/bin/fusg
+

@@ -1,6 +1,10 @@
 Kernel Auditing Support
 =======================
 
+These are some notes on the kernel auditing subsystem 
+and the user space utilities available for it.
+
+
 
 
 Auditing Kernel Module (kauditd)

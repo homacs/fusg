@@ -1,0 +1,52 @@
+
+
+INSTALLATION
+------------
+
+
+After BUILD!
+
+
+Copy executables *fusg* and *fusgd* to an appropriate location such as this:
+
+> sudo cp ./Release/fusgd /sbin/fusgd
+> sudo cp ./Release/fusg  /usr/local/bin/fusg
+> sudo chmod +s  /usr/local/bin/fusg
+
+Executables fusg and fusgd have to be owned by root
+and the command line tool has to have the setuid
+bit set (therefore chmod +s).
+
+They will also need a config file, usually to be 
+found in 
+
+    /etc/fusg/fusg.conf 
+    
+You can specify another location with parameter 
+-c or --conf (accepted by both).
+
+You've got an example conf file with the sources 
+(see ../etc/fusg.conf). This one has been configured for
+debugging purposes and will create files in /tmp
+only. It contains documentation (see there).
+
+Next, copy the configuration of the plugin (fusgd) into the 
+plugin.d folder of audispd.
+NOTE: Location of the folder can differ, see man audispd.conf.
+
+> sudo cp ../etc/audisp/plugin.d/fusgd.conf /etc/audisp/plugin.d/fusgd.conf
+
+Review the configuration of auditd and make sure, audispd is actually 
+active.
+
+> sudo vi /etc/audit/auditd.conf
+
+  Must contain the following line:
+  
+  dispatcher = /sbin/audispd
+  
+
+Finally restart auditd to make changes happen.
+
+> sudo systemctl restart auditd
+

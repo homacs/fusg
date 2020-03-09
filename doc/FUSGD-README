@@ -1,0 +1,39 @@
+
+
+
+FILE USAGE DAEMON AS AUDISPD PLUGIN
+===================================
+
+This is an ordinary audispd plugin.
+
+It's initial code is originating from
+
+    "audit-2.8.2/contrib/plugin/audisp-example.c"
+
+
+
+
+DEBUGGING:
+----------
+
+fusgd supports a debug mode for development purposes, 
+where it reads auditing events from a file
+
+    /tmp/test.log
+    
+This file can be created with the following command:
+
+    sudo ausearch --start today --raw > /tmp/test.log
+
+
+
+Audit Event Format (string):
+----------------------------
+
+event:  record+
+record: '(' timestamp ':' serial ')' type_field field+
+type_field: 'type=' audit_type_name
+field:  name '=' value
+name:   string
+value:  string
+string: // utf-8?

@@ -28,6 +28,4 @@ BUILD_DIR=$(TOP_DIR)/$(BUILD_DIR_NAME)
 OBJECTS_DIR=$(BUILD_DIR)/.objects
 SOURCES_DIR=$(TOP_DIR)/sources
 
-VPATH=.
-
 endif # __CONFIG_MK__

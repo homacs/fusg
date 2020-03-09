@@ -27,7 +27,6 @@ void test_fwhich(void)
 	testsub_fwhich("find", "/usr/bin/find");
 }
 
-
 void test_iscanonical(void)
 {
 	assert(0 == fiscanonical("tmp"));
