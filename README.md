@@ -20,7 +20,7 @@ FUSG depends on:
 * auditd: A user-space auditing daemon. 
 * libauparse: Library used to parse auditing events.
 * libaudit: Library required by libauparse.
-* gdbm: GNU file-base name-value db.
+* gdbm: GNU file-based name-value db.
 
 or simply:
 
@@ -120,13 +120,13 @@ Command line tool to query the fusg database.
         * Type of access (create/read/write/delete?)
 3. List all file<->executable statistics
 
-  > fusg -e /bin/firefox
+    > fusg -e /bin/firefox
 
-  File usage statistics
-  executable: '/bin/firefox'
+    File usage statistics
+    executable: '/bin/firefox'
   
-  CREAT   READ  WRITE  FILE
-  ---------------------------
+    CREAT   READ  WRITE  FILE
+    ---------------------------
       1   1002    124  /home/homac/.mozilla
       1   1002    124  /home/homac/.mozilla
       1   1002    124  /home/homac/.mozilla
@@ -159,6 +159,5 @@ Currently, fusg does not consider privacy issues. Any user can see which
 executable accessed which file/folders. Thus, seeing entries like 
 /bin/wireshark accessed /home/<username>/.wireshark lets anybody know, that user 
 'username' did something with wireshark. Thus, visibility of user 
-actions should be restricted to the user itself and admins which could 
-be achieved by storing user actions in user-specific databases. 
+actions should be restricted to the user itself and admins in the future. 
 
