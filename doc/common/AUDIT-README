@@ -1,0 +1,82 @@
+Kernel Auditing Support
+=======================
+
+
+
+Auditing Kernel Module (kauditd)
+--------------------------------
+The auditing module is a module with a permanent running kernel thread [kauditd] 
+in kernel space, written by Rickard E. (Rik) Faith <faith@redhat.com>.
+It provides a service interface using the kernel netlink protocol (see netlink(7)).
+The service interface can be used to configure auditing and receive event 
+notifications on recorded auditing related user activities 
+(TODO: types of events).
+
+  
+Goals: 
+      1) Integrate fully with Security Modules.
+  	  2) Minimal run-time overhead:
+  	     a) Minimal when syscall auditing is disabled (audit_enable=0).
+  	     b) Small when syscall auditing is enabled and no audit record
+  	        is generated (defer as much work as possible to record
+  	        generation time):
+  		i) context is allocated,
+  		ii) names from getname are stored without a copy, and
+  		iii) inode information stored from path_lookup.
+  	  3) Ability to disable syscall auditing at boot time (audit=0).
+  	  4) Usable by other parts of the kernel (if audit_log  is called,
+  	     then a syscall record will be generated automatically for the
+  	     current syscall).
+  	  5) Netlink interface to user-space.
+  	  6) Support low-overhead kernel-based filtering to minimize the
+  	     information that must be passed to user-space.
+  
+   Example user-space utilities: http://people.redhat.com/sgrubb/audit/
+
+/* Records can be lost in several ways:
+   0) [suppressed in audit_alloc]
+   1) out of memory in audit_log_start [kmalloc of struct audit_buffer]
+   2) out of memory in audit_log_move [alloc_skb]
+   3) suppressed due to audit_rate_limit
+   4) suppressed due to audit_backlog_limit
+*/
+
+Auditing Clients
+----------------
+Audit Kernel Module differentiates between two types of connections:
+1. Control connection: This connection is used to control and configure
+   the kernel audit module. It is a single connection held by exactly
+   one client. This connection can only be used by processes with uid 'root',
+   which run in the init namespace (i.e. not in a virtual machine). Once 
+   established, no other client can connect to it. Usually, this connection
+   is occupied by the user space audit daemon (auditd). 
+
+
+netlink family/group:
+   NETLINK_AUDIT: Netlink group used to control auditing module.
+        defined in: include/uapi/linux/netlink.h
+        defined as: 9
+   AUDIT_NLGRP_READLOG: Group used to receive auditing events (multicast).
+        defined in: include/uapi/linux/audit.h
+        defined as: 1
+        portid:  0
+        flags: GFP_KERNEL
+   
+   
+multicast goes via socket of 
+
+   sock* sk = audit_get_sk(init_net);
+
+with
+
+   const sturct net* init_net;
+   
+defined in
+
+
+
+Auditd User Space Daemon
+------------------------
+The daemon auditd runs in user space and writes events to a log file 
+(e.g. /var/log/audit/audit.log).
+   
