@@ -135,8 +135,7 @@ Command line tool to query the fusg database.
 
 #### fusg.db
 Database, containing file access events.
-Its one big table (possibly partitioned by directories) with the following
-schema:
+It's set of file dbs with the following schema:
 
     exec.db:
 		exe_id path_to_exe
