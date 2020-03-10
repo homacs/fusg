@@ -59,6 +59,7 @@ char* ptime(uint64_t time, char* buf)
 static inline
 const char* fabsolute(const char* cwd, const char* path, char* absolute)
 {
+
 	if (path[0] != '/')
 	{
 		// append path to cwd

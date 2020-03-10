@@ -80,8 +80,10 @@ int parse_syscall(fusg_event_t* fusg, auparse_state_t *au)
 {
 	int rc = 0;
 
-
 	int machine = -1;
+
+	fusg->executable = NULL;
+
 
 	if (!auparse_first_field(au))
 	{
@@ -122,13 +124,15 @@ int parse_syscall(fusg_event_t* fusg, auparse_state_t *au)
 		}
 	} while (auparse_next_field(au) > 0);
 
-	return rc;
+	return fusg->executable ? rc : ERR_AUPARSE;
 }
 
 
 int parse_cwd(fusg_event_t* fusg, auparse_state_t *au)
 {
 	int rc = 0;
+
+	fusg->cwd = NULL;
 
 	if (!auparse_first_field(au))
 	{
@@ -153,9 +157,9 @@ int parse_cwd(fusg_event_t* fusg, auparse_state_t *au)
 			fusg->cwd = auparse_interpret_field(au);
 			break;
 		}
-	}
-	while (auparse_next_field(au) > 0);
-	return rc;
+	} while (auparse_next_field(au) > 0);
+
+	return fusg->cwd ? rc : ERR_AUPARSE;
 }
 
 
@@ -164,6 +168,7 @@ int parse_path(fusg_event_t* fusg, auparse_state_t *au)
 {
 	int rc = 0;
 
+	fusg->filepath = NULL;
 
 	if (!auparse_first_field(au))
 	{
@@ -226,7 +231,7 @@ int parse_path(fusg_event_t* fusg, auparse_state_t *au)
 
 	if (!fusg->flags) fusg->flags = FUSG_READ;
 
-	return rc;
+	return fusg->filepath ? rc : ERR_AUPARSE;
 }
 
 

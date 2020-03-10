@@ -1,0 +1,15 @@
+[-] fusgd segfaults sometimes. 
+    Can be observed in syslog (or dmesg).
+    message: fusgd[19129]: segfault at 0 ip 00007fbe455b2646 sp 00007fffbe5d7628 error 4 in libc-2.27.so[7fbe45501000+1e7000]
+    Always with the exact same syslog message.
+    Reproduce: Just let it run for a while.
+    Fix: Setup system to store core dumps of daemons somewhere reasonable,
+              so I can analyse it with gdb.
+
+[-] fusgd does not properly consider syscall parameters and therefore fails do determine absolute file paths.
+    Reproduce: `/bin/rm` -r or `/bin/find`
+    Guess: First parameter of openat() is currently not considered
+           which would result in exactly this kind of errors.
+    Fix: Write parser functions which interpret syscall parameters properly
+         and consider their return values (success or error). Unsuccessful 
+         attempts probably don't have to be recorded.
