@@ -238,6 +238,7 @@ int parse_path(fusg_event_t* fusg, auparse_state_t *au)
 int store_event(auparse_state_t *au)
 {
 	int rc = 0;
+	int stored = 0; // true if anything of this event was stored
 
 	dbref_t db = global.db;
 	assert(db);
@@ -297,6 +298,7 @@ int store_event(auparse_state_t *au)
 							fusg.filepath,
 							fusg.flags,
 							fusg.timestamp);
+					stored = 1;
 				}
 				else
 				{
@@ -310,6 +312,8 @@ int store_event(auparse_state_t *au)
 		}
 
 	} while (!rc && auparse_next_record(au) > 0);
+
+	if (!rc && stored) global.events_stored++;
 
 	return rc;
 }

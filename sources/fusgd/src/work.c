@@ -97,10 +97,9 @@ int work()
 				FD_SET(global.fd, &read_mask);
 				retval = select(1, &read_mask, NULL, NULL, &tv);
 
-				// retry if we select was just interrupted by
-				// a signal handler and neither sighup nor stop is set.
+				// retry if select was just interrupted by a signal
+				// handler and neither sighup nor stop is set.
 				retry = (retval == -1 && errno == EINTR && !global.received_sighup && !global.stop);
-
 			} while (retry);
 		}
 
@@ -134,15 +133,18 @@ int work()
 
 			auparse_flush_feed(au);
 
-			// since we are waiting
-			// check if we have to flush the db
+			// since we are waiting check if we can
+			// flush changes in db to file system.
 			periodic_db_flush();
 		}
 	} while (!feof(global.fin) && !global.stop);
 
-	/* Flush any accumulated events from queue */
+	// flush any accumulated events from queue
 	auparse_flush_feed(au);
 	auparse_destroy(au);
+
+	// do a final explicit flush
+	db_flush(global.db);
 
 	return rc;
 }
@@ -164,11 +166,6 @@ static void handle_event(auparse_state_t *au, auparse_cb_event_t cb_event_type,
 	if (rc)
 	{
 		log_error("rc=%d, errno: %s", rc, strerror(errno));
-	}
-	else
-	{
-		global.events_stored++;
-		periodic_db_flush(global.db);
 	}
 
 	if (0 == global.events_processed % 1000)
