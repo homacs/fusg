@@ -65,7 +65,7 @@ void store_error(fusg_event_t* fusg, const char* fmt, ...)
 int check_field_value(fusg_event_t* fusg, auparse_state_t *au, const char* expect_value)
 {
 	const char* value = auparse_interpret_field(au);
-	if (strcmp(value, expect_value))
+	if (value && strcmp(value, expect_value))
 	{
 		store_error(fusg, "expected value '%' but got '%s'", expect_value, value);
 		return ERR_AUPARSE;

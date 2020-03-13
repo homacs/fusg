@@ -37,7 +37,7 @@
                             							
                             <targetPlatform id="cdt.managedbuild.target.gnu.platform.exe.debug.1596074612" name="Debug Platform" superClass="cdt.managedbuild.target.gnu.platform.exe.debug"/>
                             							
-                            <builder arguments="-j 8" buildPath="${workspace_loc:/fusg}/sources" command="make" enableAutoBuild="true" id="cdt.managedbuild.target.gnu.builder.exe.debug.1394415878" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.debug"/>
+                            <builder arguments="" buildPath="${workspace_loc:/fusg}/sources" command="make" enableAutoBuild="true" id="cdt.managedbuild.target.gnu.builder.exe.debug.1394415878" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder" superClass="cdt.managedbuild.target.gnu.builder.exe.debug"/>
                             							
                             <tool id="cdt.managedbuild.tool.gnu.archiver.base.1502637102" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
                             							
