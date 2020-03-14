@@ -32,10 +32,8 @@ SOURCES_DIR=$(TOP_DIR)/sources
 -include $(foreach PART, $(PARTS), $(SOURCES_DIR)/$(PART)/exports.mk)
 
 
-
-EXEC_BUILD_STAGES=@for stage in $(BUILD_STAGES); do 	$(MAKE) -j --jobserver-fds=3,4 $$stage  || exit 1 ; 	done
-
-define EXEC_PARTS
+# For some reason, MAKEFLAGS don't work properly in recursive calls.
+define EXEC_PARTS =
 	$(MAKE) -j --jobserver-fds=3,4 -C fusg-common $@
 	$(MAKE) -j --jobserver-fds=3,4 -C fusgd $@
 	$(MAKE) -j --jobserver-fds=3,4 -C fusg $@

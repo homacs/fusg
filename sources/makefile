@@ -3,25 +3,20 @@ include ./config.mk
 
 
 
-BUILD_STAGES = depend build
-
-
-
+# run through build stages
+# 1. depend: build dependency files
+# 2. build: compile and link binaries
 all:
 	@$(MAKE) -j8 depend
 	@$(MAKE) -j8 build
 
 depend:
-	@$(MAKE) -j --jobserver-fds=3,4 -C fusg-common $@
-	@$(MAKE) -j --jobserver-fds=3,4 -C fusgd $@
-	@$(MAKE) -j --jobserver-fds=3,4 -C fusg $@
-	@$(MAKE) -j --jobserver-fds=3,4 -C fusg-test $@
+	+@$(EXEC_PARTS)
 
-build:
-	@$(MAKE) -j --jobserver-fds=3,4 -C fusg-common $@
-	@$(MAKE) -j --jobserver-fds=3,4 -C fusgd $@
-	@$(MAKE) -j --jobserver-fds=3,4 -C fusg $@
-	@$(MAKE) -j --jobserver-fds=3,4 -C fusg-test $@
+build: 
+	+@$(EXEC_PARTS)
+
+
 
 clean:
 	rm -rf $(BUILD_DIR)
