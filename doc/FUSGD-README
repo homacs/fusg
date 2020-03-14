@@ -27,6 +27,42 @@ This file can be created with the following command:
 
 
 
+ENABLING CORE DUMPS
+-------------------
+
+Everything about core dumps can be read in core(5).
+
+Core dumps for daemons can be captured by properly configuring 
+/proc/sys/kernel/core_pattern (cf. core(5)). Unfortunately, 
+apport (Ubuntu's error detection and reporting tool) segfaults,
+when trying to decode the core dump stored by it.  
+
+systemd has its own core dump redirect, also explained in 
+core(5).
+
+To enable core dumps in absence of apport or systemd, do this:
+
+1. Become root
+	> su
+
+2. Uninstall apport
+	> apt-get remove apport
+
+3. Create a directory to receive the core dumps
+	> mkdir /var/crash   # may already exist ..
+	> ls -ld /var/crash
+	
+	#     drwxrwsrwt 2 root whoopsie 4096 Mär 14 13:17 /var/crash
+
+4. Setup the pattern to write core dumps to that directory
+	echo "|/usr/bin/tee /var/crash/core.%e-pid%p-time%t" > /proc/sys/kernel/core_pattern
+
+NOTE 1: You can't use an editor for /proc/sys/kernel/core_pattern
+        because it is not a regular file (I guess).
+NOTE 2: Using '|', causes the kernel to pipe the dump to the command
+        denoted by the remainder of the pattern. It will always do
+        that regardless of the ulimit settings. Thus, best for daemons.
+
 Audit Event Format (string):
 ----------------------------
 

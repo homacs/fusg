@@ -1,9 +1,8 @@
 TOP_DIR=../..
 include ../config.mk
-
-
-PART = fusg-test
 include ../part-pre.mk
+
+
 
 
 HEADERS   += $(FUSG_LIB_HDRS)

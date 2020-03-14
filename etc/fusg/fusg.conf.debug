@@ -4,15 +4,15 @@
 
 # db location
 # DEFAULT: "/var/fusg/db"
-db_path = /var/fusg/db	
+db_path = /tmp/fusgdb-test	
 
 
 # daemon logging location
 # DEFAULT: /var/log/fusg/fusgd.log
-fusgd_log = "/var/fusg/fusgd.log"
+fusgd_log = "/tmp/fusgd.log"
 
 
 # tracing of events
 # Uncomment to disable
 # DEFAULT: not set
-fusgd_trace = "/var/fusg/fusgd.trace"
+fusgd_trace = "/tmp/fusgd.trace"

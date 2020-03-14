@@ -1,14 +1,22 @@
-[-] build: needs pass to make .depend files
 
-[-] fusgd: segfault still exists
-	syslog: fusgd[23144]: segfault at 0 ip 00007f0447c8b646 sp 00007ffebe6f37f8 error 4 in libc-2.27.so[7f0447bda000+1e7000]
-	fix: enable core dump and analyse it.
-	note: https://unix.stackexchange.com/questions/192716/how-to-set-the-core-dump-file-location-and-name#192836
-	
-[-] fusgd: does not properly consider syscall parameters and therefore fails do determine absolute file paths.
+[-] fusgd: There are lots of incomplete events coming from
+	audispd (only those with PATH record are actually noted as
+	such by fusgd). Many events have missing records such as CWD, 
+	PATH and other record types. This has been seen in several
+	cases regardless of the type of event, success of
+	associated syscall or whether files exist or not (realpath).
+	It is possible, that audispd or even auditd just misses 
+	incoming messages, but that has to be further analysed.
+
+[-] fusgd: does not properly consider syscall parameters and therefore 
+	       fails do determine absolute file paths.
     Reproduce: `/bin/rm` -r or `/bin/find`
     Guess: First parameter of openat() is currently not considered
            which would result in exactly this kind of errors.
     Fix: Write parser functions which interpret syscall parameters properly
          and consider their return values (success or error). Unsuccessful 
          attempts probably don't have to be recorded.
+
+[-] fusg: is still incomplete. Most notably: fusg does not consider soft- 
+    and hard links properly and thus will not list all entries referring
+    to the same inode entry.

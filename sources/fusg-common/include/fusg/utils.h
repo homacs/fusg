@@ -59,6 +59,10 @@ char* ptime(uint64_t time, char* buf)
 static inline
 const char* fabsolute(const char* cwd, const char* path, char* absolute)
 {
+	if (!cwd || !path) {
+		errno = EINVAL;
+		return NULL;
+	}
 
 	if (path[0] != '/')
 	{
@@ -244,6 +248,11 @@ static inline
 const char* frealpath(const char* cwd, const char* path, char* resolved)
 {
 	path = fabsolute(cwd, path, resolved);
+	if (!path)
+	{
+		// errno is set
+		return NULL;
+	}
 
 	// try to get the real path
 	char canonical[PATH_MAX+1];
@@ -267,6 +276,7 @@ const char* frealpath(const char* cwd, const char* path, char* resolved)
 static inline
 int fiscanonical(const char* path)
 {
+	assert (path);
 
 	if (path[0] != '/')
 	{
@@ -318,6 +328,12 @@ int fiscanonical(const char* path)
 static inline
 int fremove_r(const char* path)
 {
+	if (!path)
+	{
+		errno = EINVAL;
+		return -1;
+	}
+
 	DIR* dir = NULL;
 	typedef char filename_t[NAME_MAX+1];
 	typedef char pathname_t[PATH_MAX+1];
@@ -405,6 +421,11 @@ bail:
 static inline
 int fdir_contains(const char* dbpath, const char* file)
 {
+	if (!dbpath || !file)
+	{
+		errno = EINVAL;
+		return -1;
+	}
 	char pathbuf[PATH_MAX+1];
 	snprintf(pathbuf, PATH_MAX, "%s/%s", dbpath, file);
 	return fexists(pathbuf);
@@ -418,6 +439,12 @@ int fdir_contains(const char* dbpath, const char* file)
 static inline
 int mkdir_p(const char* dirpath, size_t len, int mode)
 {
+	if (!dirpath)
+	{
+		errno = EINVAL;
+		return -1;
+	}
+
 	int rc;
     char* tmp = (char*)dirpath;
     char *p = NULL;

@@ -32,7 +32,8 @@ typedef struct {
 	// intermediate parsing results
 	//
 	uint64_t serial;    // event serial number
-	int sc; 			// syscall number
+	int syscall_number; 			// syscall number
+	int syscall_success; 		// whether syscall was successful
 	const char* cwd;	// current wd of executable
 
 
@@ -80,8 +81,6 @@ int parse_syscall(fusg_event_t* fusg, auparse_state_t *au)
 {
 	int rc = 0;
 
-	int machine = -1;
-
 	fusg->executable = NULL;
 
 
@@ -103,18 +102,30 @@ int parse_syscall(fusg_event_t* fusg, auparse_state_t *au)
 		}
 		else
 #endif // NDEBUG
-		if (!strcmp(name, "arch"))
+		if (!strcmp(name, "syscall"))
 		{
-			value = auparse_interpret_field(au);
-			if (value) machine = audit_name_to_machine(value);
+			fusg->syscall_number = auparse_get_field_int(au);
 		}
-		else if (!strcmp(name, "syscall"))
+		else if (!strcmp(name, "success"))
 		{
-			value = auparse_interpret_field(au);
-			fusg->sc = audit_name_to_syscall(value, machine);
+			value = auparse_get_field_str(au);
+			if (!value) return ERR_AUPARSE;
+			else if (!strcmp(value, "yes"))
+			{
+				fusg->syscall_success = 1;
+			}
+			else if (!strcmp(value, "no"))
+			{
+				fusg->syscall_success = 0;
+			}
+			else
+			{
+				return ERR_AUPARSE;
+			}
 		}
 		else if (!strcmp(name, "exe"))
 		{
+			// NOTE: auparse tries realpath(path) but returns original in case of errno!=0
 			value = auparse_interpret_field(au);
 			fusg->executable = value;
 		}
@@ -154,6 +165,7 @@ int parse_cwd(fusg_event_t* fusg, auparse_state_t *au)
 #endif // NDEBUG
 		if (!strcmp(name, "cwd"))
 		{
+			// NOTE: auparse tries realpath(path) but returns original in case of errno!=0
 			fusg->cwd = auparse_interpret_field(au);
 			break;
 		}
@@ -192,6 +204,7 @@ int parse_path(fusg_event_t* fusg, auparse_state_t *au)
 #endif // NDEBUG
 		if (!strcmp(name, "name"))
 		{
+			// NOTE: auparse tries realpath(path) but returns original in case of errno!=0
 			fusg->filepath = auparse_interpret_field(au);
 		}
 		else if (!strcmp(name, "nametype"))
@@ -244,7 +257,7 @@ int store_event(auparse_state_t *au)
 	assert(db);
 
 	fusg_event_t fusg;
-	memset(&fusg, 0, sizeof(fusg));
+	memset(&fusg, 0, sizeof(fusg_event_t));
 
 
 	const au_event_t* e = auparse_get_timestamp(au);
@@ -270,7 +283,7 @@ int store_event(auparse_state_t *au)
 	if (record_type != AUDIT_SYSCALL)
 		return 0;
 
-
+	int skip = 0;
 
 	char filepathbuf[PATH_MAX];
 	do /* iterate over all records of the event */
@@ -281,6 +294,10 @@ int store_event(auparse_state_t *au)
 		{
 		case AUDIT_SYSCALL:
 			rc = parse_syscall(&fusg, au);
+			if (!fusg.syscall_success)
+			{
+				skip = 1;
+			}
 			break;
 		case AUDIT_CWD:
 			rc = parse_cwd(&fusg, au);
@@ -289,6 +306,8 @@ int store_event(auparse_state_t *au)
 			rc = parse_path(&fusg, au);
 			if (!rc)
 			{
+
+				// So we have to be very careful about the data to be expected.
 				fusg.filepath = fabsolute(fusg.cwd, fusg.filepath, filepathbuf);
 				if (event_valid(&fusg))
 				{
@@ -311,7 +330,7 @@ int store_event(auparse_state_t *au)
 			break;
 		}
 
-	} while (!rc && auparse_next_record(au) > 0);
+	} while (!rc && !skip && auparse_next_record(au) > 0);
 
 	if (!rc && stored) global.events_stored++;
 

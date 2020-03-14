@@ -103,7 +103,7 @@ and stores them in fusg.db.
 ##### Tasks:
   * Uses libaudit to parse audit log files.
   * Updates entries in db for each directory and file
-  * stores last update time
+  * Stores last update time
   
 #### fusg
 Command line tool to query the fusg database.

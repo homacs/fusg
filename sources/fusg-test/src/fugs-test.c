@@ -3,6 +3,7 @@
 #include "fusg/db.h"
 #include "fusg/logging.h"
 #include "fusg/utils.h"
+#include "fusg/system.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -12,6 +13,19 @@
 
 #define DB_BASE_PATH "/tmp/fugsdb-test"
 
+
+void test_coredump_size(void)
+{
+	rlim_t coresize = system_coredump_size();
+	assert(coresize >= 0);
+}
+
+void test_coredump_pattern(void)
+{
+	char pattern[PATH_MAX];
+	int result = system_coredump_pattern(pattern, sizeof(pattern));
+	assert(result >= 0);
+}
 
 void testsub_fwhich(const char* cmd, const char* expect)
 {
@@ -304,6 +318,8 @@ void test_db_search(void)
 
 
 int main(void) {
+	test_coredump_pattern();
+	test_coredump_size();
 	test_fabsolute();
 	test_fwhich();
 	test_iscanonical();

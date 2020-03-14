@@ -1,12 +1,14 @@
 
+# This file implements the rules to perform standard tasks
+# in defined build stages.
 
 
 depend: $(CDEPS)
 	
-
+$(CDEPS):  $(HEADERS)
 
 # Rule for each dependency file of a c-file in this folder
-$(DEPENDS_DIR)/$(PART)/src/%.d: src/%.c $(HEADERS)
+$(DEPENDS_DIR)/$(PART)/src/%.d: src/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INCLUDES) -MM -MP -MT"$(@:%.d=%.o)" -MF "$@" $<
 
@@ -36,3 +38,9 @@ $(OBJECTS_DIR)/$(PART)/src/%.o: src/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) $(INCLUDES) -c -o $@ $<
 
+
+install:
+	
+
+distclean:
+	

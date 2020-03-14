@@ -7,11 +7,14 @@
 #include <signal.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
 
 #include "fusg/db.h"
 #include "fusg/err.h"
 #include "fusg/logging.h"
 #include "fusg/version.h"
+#include "fusg/system.h"
+
 
 #include "fusgd.h"
 #include "trace.h"
@@ -38,6 +41,7 @@ int main(int argc, char *argv[]) {
 	int rc = 0;
 	FILE* fusgd_trace = 0;
 	FILE* fusgd_log = 0;
+
 
 	// init global variables
 	memset(&global, 0, sizeof(global));
@@ -84,6 +88,27 @@ int main(int argc, char *argv[]) {
 	log_info("db_path: '%s'", global.conf.db_path);
 	log_info("fusg_log: '%s'", global.conf.fusgd_log);
 	log_info("fusg_trace: '%s'", global.conf.fusgd_trace);
+
+	rlim_t coredump_size = system_coredump_size();
+	if (coredump_size >= 0)
+	{
+		log_info("core-dump size: %d", coredump_size);
+	}
+	else
+	{
+		log_warn("getting core-dump size: %s", strerror(errno));
+	}
+
+	char coredump_pattern[PATH_MAX];
+	rc = system_coredump_pattern(coredump_pattern, sizeof(coredump_pattern));
+	if (rc >= 0)
+	{
+		log_info("core_pattern: %s", coredump_pattern);
+	}
+	else
+	{
+		log_warn("getting core-dump pattern: %s", strerror(errno));
+	}
 
 
 	if (global.mode == OP_PARSE_FILE)
@@ -214,9 +239,10 @@ static int read_args(int argc, char** argv)
 		}
 		else
 		{
-			log_error("missing arguments");
+			log_error("illegal argument: %s", arg);
 			global.mode = OP_HELP;
 			rc = ERR_USAGE;
+			break;
 		}
 	}
 

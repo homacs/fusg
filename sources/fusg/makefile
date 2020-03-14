@@ -1,9 +1,8 @@
 TOP_DIR=../..
 include ../config.mk
-
-
-PART = fusg
 include ../part-pre.mk
+
+
 
 
 HEADERS  += $(FUSG_LIB_HDRS)
@@ -13,6 +12,8 @@ LIBRARIES +=-lgdbm
 
 
 EXECUTABLE=$(BUILD_DIR)/$(PART)
+
+
 
 
 include ../part-post.mk

@@ -7,11 +7,19 @@ TOP_DIR=..
 endif
 
 
-
+# PARTS
+# Sub-directories that contain code to 
+# be compiled.
 PARTS=fusg-common fusgd fusg fusg-test
 
+# BUILD_BASE
+# Directory where build will be performed.
 BUILD_BASE=$(TOP_DIR)
 
+
+# PREFIX
+# Toplevel directory to install to or distclean from
+PREFIX=/usr/local
 
 
 ifdef DEBUG
@@ -29,18 +37,19 @@ DEPENDS_DIR=$(OBJECTS_DIR)
 
 SOURCES_DIR=$(TOP_DIR)/sources
 
--include $(foreach PART, $(PARTS), $(SOURCES_DIR)/$(PART)/exports.mk)
+
+
+
+-include $(foreach __PART__, $(PARTS), $(SOURCES_DIR)/$(__PART__)/exports.mk)
 
 
 # For some reason, MAKEFLAGS don't work properly in recursive calls.
-define EXEC_PARTS =
+define MAKE_PARTS =
 	$(MAKE) -j --jobserver-fds=3,4 -C fusg-common $@
 	$(MAKE) -j --jobserver-fds=3,4 -C fusgd $@
 	$(MAKE) -j --jobserver-fds=3,4 -C fusg $@
 	$(MAKE) -j --jobserver-fds=3,4 -C fusg-test $@
 endef	
-
-
 
 
 
